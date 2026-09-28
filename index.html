@@ -2,505 +2,596 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Petualangan Angka 7 - Game Belajar TK</title>
-    <!-- Tailwind CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Petualangan Angka 7 - Game Edukasi Anak TK</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Inter & Fredoka untuk kesan ramah anak -->
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
-    <!-- Canvas Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Fredoka', 'Quicksand', sans-serif;
-            background: linear-gradient(135deg, #a8edd9 0%, #fed6e3 100%);
+        * {
+            font-family: 'Quicksand', sans-serif;
             touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
         }
-        .bouncy-hover:hover {
-            transform: scale(1.08) rotate(-2deg);
+        h1, h2, h3, .font-fun {
+            font-family: 'Fredoka One', cursive;
         }
-        .bouncy-hover:active {
-            transform: scale(0.95);
+        .bg-pattern {
+            background-color: #8EC5FC;
+            background-image: linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%);
         }
-        .floating {
-            animation: float 3s ease-in-out infinite;
+        .bouncing {
+            animation: bounce 1.8s infinite;
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(3deg); }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-12px) scale(1.03); }
         }
-        .star-glow {
-            filter: drop-shadow(0px 0px 8px #facc15);
+        .pulse-btn {
+            animation: pulse 1.5s infinite;
         }
-        .cert-border {
-            border: 8px dashed #f59e0b;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+            100% { transform: scale(1); }
         }
+        .pop-in {
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        ::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-3 md:p-6 text-slate-800 selection:bg-pink-300">
+<body class="bg-pattern min-h-screen text-slate-800 flex flex-col justify-between overflow-x-hidden selection:bg-pink-300">
 
-    <!-- Container Utama App -->
-    <div id="app" class="w-full max-w-2xl bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl border-4 border-white overflow-hidden relative min-h-[620px] flex flex-col justify-between">
-        
-        <!-- Header / Bar Atas -->
-        <header class="bg-amber-400 p-4 text-white flex justify-between items-center shadow-md relative z-10">
-            <div class="flex items-center gap-2">
-                <svg class="w-9 h-9 fill-current text-white floating" viewBox="0 0 100 100">
-                    <path d="M 20 20 L 80 20 L 50 85 C 48 88 42 88 40 85 L 35 70 C 35 70 50 38 52 35 C 53 32 50 32 45 32 L 20 32 Z" fill="#FF5722"/>
-                    <circle cx="35" cy="27" r="4" fill="#000"/>
-                    <circle cx="65" cy="27" r="4" fill="#000"/>
-                    <path d="M 45 31 Q 50 36 55 31" stroke="#000" stroke-width="2" fill="none"/>
-                </svg>
-                <h1 class="text-xl md:text-2xl font-bold tracking-wide drop-shadow text-amber-950">Petualangan Angka 7</h1>
-            </div>
-            <button id="soundToggle" onclick="toggleAudio()" class="bg-amber-500 hover:bg-amber-600 text-amber-950 p-2 rounded-full transition shadow flex items-center justify-center w-10 h-10">
-                <span id="soundIcon" class="text-xl">🔊</span>
+    <header class="w-full max-w-4xl mx-auto p-4 flex justify-between items-center z-10">
+        <button id="home-btn" onclick="showScreen('menu')" class="hidden bg-yellow-400 hover:bg-yellow-300 text-yellow-950 font-bold px-4 py-2 rounded-2xl shadow-lg border-b-4 border-yellow-600 flex items-center gap-2 transform active:scale-95 transition">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l1.293 1.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+            <span>Menu Utama</span>
+        </button>
+
+        <div class="flex items-center gap-2 ml-auto">
+            <button id="sound-toggle" onclick="toggleSound()" class="bg-white/80 backdrop-blur p-3 rounded-2xl shadow-md border-2 border-indigo-200 text-indigo-700 hover:bg-white active:scale-90 transition">
+                <svg id="sound-icon-on" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                <svg id="sound-icon-off" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/></svg>
             </button>
-        </header>
+        </div>
+    </header>
 
-        <!-- Main Dynamic Screen Area -->
-        <main id="screenArea" class="p-4 md:p-6 flex-grow flex flex-col justify-center items-center relative">
-            <!-- Screen content renders dynamically via JavaScript -->
-        </main>
+    <main class="w-full max-w-4xl mx-auto px-4 flex-1 flex flex-col justify-center items-center py-4">
 
-        <!-- Footer / Navigasi Tahap -->
-        <footer class="bg-slate-100 p-3 border-t border-slate-200 flex justify-around items-center text-xs md:text-sm font-semibold text-slate-500">
-            <div id="step1Indicator" class="flex items-center gap-1 text-amber-600 font-bold">
-                <span class="w-6 h-6 rounded-full bg-amber-400 text-white flex items-center justify-center text-xs">1</span> Belajar & Hitung
+        <!-- SCREEN 1: MENU UTAMA -->
+        <section id="screen-menu" class="w-full text-center flex flex-col items-center gap-6">
+            <div class="relative bouncing my-2">
+                <div class="w-36 h-36 bg-yellow-300 rounded-full flex items-center justify-center border-8 border-white shadow-2xl mx-auto">
+                    <span class="font-fun text-8xl text-indigo-600 drop-shadow-md">7</span>
+                </div>
+                <div class="absolute -top-3 -right-2 text-4xl">👑</div>
             </div>
-            <div id="step2Indicator" class="flex items-center gap-1 opacity-50">
-                <span class="w-6 h-6 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-xs">2</span> Tracing 7
-            </div>
-            <div id="step3Indicator" class="flex items-center gap-1 opacity-50">
-                <span class="w-6 h-6 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-xs">3</span> Sertifikat
-            </div>
-        </footer>
-    </div>
 
-    <!-- JavaScript Logic & Audio Web API -->
+            <div>
+                <h1 class="font-fun text-4xl sm:text-6xl text-indigo-900 tracking-wide drop-shadow">Petualangan Angka 7</h1>
+                <p class="text-indigo-800 text-lg sm:text-xl font-bold mt-2">Ayo Belajar & Bermain Bersama Si Angka 7!</p>
+            </div>
+
+            <!-- Grid Menu Game -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-lg mt-4">
+                <button onclick="startMiniGame(1)" class="bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-bold p-5 rounded-3xl border-b-8 border-emerald-600 shadow-xl flex items-center gap-4 active:translate-y-1 transition text-left">
+                    <span class="text-4xl bg-white p-3 rounded-2xl shadow">⭐</span>
+                    <div>
+                        <div class="font-fun text-xl">1. Hitung 1-7</div>
+                        <div class="text-xs text-emerald-900 font-semibold">Ketuk bintang sampai 7!</div>
+                    </div>
+                </button>
+
+                <button onclick="startMiniGame(2)" class="bg-pink-400 hover:bg-pink-300 text-pink-950 font-bold p-5 rounded-3xl border-b-8 border-pink-600 shadow-xl flex items-center gap-4 active:translate-y-1 transition text-left">
+                    <span class="text-4xl bg-white p-3 rounded-2xl shadow">🎈</span>
+                    <div>
+                        <div class="font-fun text-xl">2. Cari Jumlah 7</div>
+                        <div class="text-xs text-pink-900 font-semibold">Pilih kelompok berisi 7 benda!</div>
+                    </div>
+                </button>
+
+                <button onclick="startMiniGame(3)" class="bg-sky-400 hover:bg-sky-300 text-sky-950 font-bold p-5 rounded-3xl border-b-8 border-sky-600 shadow-xl flex items-center gap-4 active:translate-y-1 transition text-left">
+                    <span class="text-4xl bg-white p-3 rounded-2xl shadow">✏️</span>
+                    <div>
+                        <div class="font-fun text-xl">3. Tulis Angka 7</div>
+                        <div class="text-xs text-sky-900 font-semibold">Tebalkan garis pelangi angka 7!</div>
+                    </div>
+                </button>
+
+                <button onclick="startMiniGame(4)" class="bg-purple-400 hover:bg-purple-300 text-purple-950 font-bold p-5 rounded-3xl border-b-8 border-purple-600 shadow-xl flex items-center gap-4 active:translate-y-1 transition text-left">
+                    <span class="text-4xl bg-white p-3 rounded-2xl shadow">🎯</span>
+                    <div>
+                        <div class="font-fun text-xl">4. Tangkap Angka 7</div>
+                        <div class="text-xs text-purple-900 font-semibold">Ketuk angka 7 yang jatuh!</div>
+                    </div>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: MINI GAME 1 -->
+        <section id="screen-game1" class="hidden w-full flex-col items-center text-center gap-4">
+            <div class="bg-white/90 backdrop-blur px-6 py-3 rounded-full shadow-md border-2 border-emerald-300">
+                <h2 class="font-fun text-xl sm:text-2xl text-emerald-800">Ketuk Bintang untuk Menghitung (1-7)!</h2>
+            </div>
+            <div class="flex items-center gap-4 my-2">
+                <span class="text-lg font-bold text-indigo-900">Hitungan Saat Ini:</span>
+                <span id="g1-counter" class="font-fun text-6xl text-emerald-600 bg-white px-6 py-2 rounded-3xl shadow-inner border-4 border-emerald-400">0</span>
+            </div>
+            <div id="g1-star-container" class="grid grid-cols-3 sm:grid-cols-4 gap-4 p-4 bg-white/40 rounded-3xl border-4 border-white shadow-lg w-full max-w-md min-h-[280px] justify-items-center items-center">
+            </div>
+        </section>
+
+        <!-- SCREEN 3: MINI GAME 2 -->
+        <section id="screen-game2" class="hidden w-full flex-col items-center text-center gap-4">
+            <div class="bg-white/90 backdrop-blur px-6 py-3 rounded-full shadow-md border-2 border-pink-300">
+                <h2 class="font-fun text-xl sm:text-2xl text-pink-800">Mana Kelompok yang Jumlahnya Tepat 7?</h2>
+            </div>
+            <div id="g2-options-container" class="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-2xl my-4">
+            </div>
+        </section>
+
+        <!-- SCREEN 4: MINI GAME 3 -->
+        <section id="screen-game3" class="hidden w-full flex-col items-center text-center gap-4">
+            <div class="bg-white/90 backdrop-blur px-6 py-3 rounded-full shadow-md border-2 border-sky-300">
+                <h2 class="font-fun text-xl sm:text-2xl text-sky-800">Tebalkan & Tulis Angka 7!</h2>
+            </div>
+            <div class="relative bg-white rounded-3xl p-4 shadow-xl border-4 border-sky-300 flex justify-center items-center">
+                <canvas id="trace-canvas" width="300" height="320" class="border-2 border-dashed border-sky-200 rounded-2xl cursor-crosshair touch-none"></canvas>
+                <div class="absolute top-8 left-12 text-sky-400 font-bold text-xs pointer-events-none">Start ➔</div>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="resetTracing()" class="bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold px-6 py-2 rounded-2xl shadow border-b-4 border-amber-600 active:scale-95 transition">
+                    🔄 Hapus & Ulangi
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 5: MINI GAME 4 -->
+        <section id="screen-game4" class="hidden w-full flex-col items-center text-center gap-2">
+            <div class="bg-white/90 backdrop-blur px-6 py-2 rounded-full shadow-md border-2 border-purple-300 flex justify-between items-center w-full max-w-md">
+                <span class="font-fun text-lg text-purple-800">Ketuk Angka 7!</span>
+                <span class="font-fun text-xl text-purple-900 bg-purple-100 px-3 py-1 rounded-xl">Skor: <span id="g4-score">0</span> / 7</span>
+            </div>
+            <div id="catch-container" class="relative w-full max-w-md h-[340px] bg-slate-900/10 backdrop-blur rounded-3xl border-4 border-white shadow-inner overflow-hidden my-2">
+            </div>
+        </section>
+
+        <!-- MODAL / CELEBRATION OVERLAY -->
+        <div id="celebration-modal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex flex-col justify-center items-center p-4 overflow-y-auto">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full text-center shadow-2xl border-4 border-yellow-400 pop-in relative my-auto">
+                <div class="text-6xl my-2 bouncing">🎉🏆🎉</div>
+                
+                <!-- Pesan Utama -->
+                <h2 class="font-fun text-2xl sm:text-3xl text-indigo-900 mb-2">
+                    Selamat, kamu berhasil menyelesaikan misi petualangan angka 7.
+                </h2>
+                <p class="font-fun text-xl text-emerald-600 mb-4">Baarakallahu fiik.</p>
+
+                <!-- Input Nama Anak -->
+                <div id="name-input-section" class="bg-yellow-50 p-4 rounded-2xl border-2 border-yellow-300 mb-6">
+                    <label for="child-name" class="block text-indigo-950 font-bold mb-2 text-sm sm:text-base">
+                        Tulis Nama Anak Hebat Ini:
+                    </label>
+                    <input type="text" id="child-name" placeholder="Ketik nama di sini..." class="w-full text-center px-4 py-3 rounded-xl border-2 border-yellow-400 text-lg font-bold text-indigo-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 mb-3 select-text select-all">
+                    <button onclick="saveChildName()" class="w-full bg-amber-400 hover:bg-amber-300 text-amber-950 font-fun text-lg py-2 rounded-xl shadow border-b-4 border-amber-600 active:scale-95 transition">
+                        Simpan Nama & Tampilkan Piagam ⭐
+                    </button>
+                </div>
+
+                <!-- Tampilan Sertifikat/Piagam setelah nama disimpan -->
+                <div id="certificate-view" class="hidden bg-gradient-to-br from-amber-100 to-yellow-50 p-5 rounded-2xl border-4 border-amber-400 mb-6 relative">
+                    <div class="text-xs text-amber-800 font-bold uppercase tracking-wider">PIAGAM BINTANG EMAS</div>
+                    <div id="display-child-name" class="font-fun text-3xl text-indigo-900 my-2 underline decoration-yellow-400">Anak Hebat</div>
+                    <p class="text-xs text-indigo-800 font-semibold">Telah Juara Menyelesaikan Misi Petualangan Angka 7!</p>
+                </div>
+
+                <div class="flex justify-center gap-2 mb-6">
+                    <span class="text-4xl">⭐</span>
+                    <span class="text-5xl">👑</span>
+                    <span class="text-4xl">⭐</span>
+                </div>
+
+                <button onclick="showScreen('menu')" class="w-full bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-fun text-xl py-4 rounded-2xl shadow-lg border-b-4 border-emerald-600 active:scale-95 transition pulse-btn">
+                    Main Lagi 🚀
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="w-full text-center p-3 text-xs text-indigo-900/70 font-semibold">
+        Petualangan Angka 7 &copy; Game Edukasi Anak TK
+    </footer>
+
     <script>
-        // App State
-        let soundEnabled = true;
-        let currentStep = 1;
-        let collectedCount = 0;
-        let childName = "";
-
-        // Web Audio Synthesizer (No external MP3 files needed!)
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        let audioCtx;
+        let audioCtx = null;
+        let isSoundOn = true;
 
         function initAudio() {
             if (!audioCtx) {
-                audioCtx = new AudioCtx();
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
         }
 
         function playSound(type) {
-            if (!soundEnabled) return;
+            if (!isSoundOn) return;
             initAudio();
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
 
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
             const now = audioCtx.currentTime;
 
             if (type === 'pop') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(300, now);
-                osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+                gain.gain.setValueAtTime(0.5, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === 'correct') {
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    gain.gain.setValueAtTime(0.3, now + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.15);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.15);
+                });
+            } else if (type === 'wrong') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.2);
                 gain.gain.setValueAtTime(0.3, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
                 osc.start(now);
-                osc.stop(now + 0.1);
-            } else if (type === 'success') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, now); // C5
-                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
-                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
-                osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
-                osc.start(now);
-                osc.stop(now + 0.5);
-            } else if (type === 'count') {
-                const pitch = 300 + (collectedCount * 60);
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(pitch, now);
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
-                osc.start(now);
-                osc.stop(now + 0.15);
+                osc.stop(now + 0.2);
+            } else if (type === 'fanfare') {
+                const melody = [523.25, 659.25, 783.99, 1046.50, 880, 1046.50];
+                melody.forEach((freq, idx) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+                    gain.gain.setValueAtTime(0.4, now + idx * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.12 + 0.25);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + idx * 0.12);
+                    osc.stop(now + idx * 0.12 + 0.25);
+                });
             }
         }
 
-        function toggleAudio() {
-            soundEnabled = !soundEnabled;
-            document.getElementById('soundIcon').innerText = soundEnabled ? '🔊' : '🔇';
+        function speakText(text) {
+            if (!isSoundOn || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'id-ID';
+            utterance.rate = 0.9;
+            utterance.pitch = 1.2;
+            window.speechSynthesis.speak(utterance);
         }
 
-        // SVGs Asset Generators
-        const SVGAssets = {
-            sevenCharacter: `
-                <svg class="w-28 h-28 floating drop-shadow-md" viewBox="0 0 100 100">
-                    <path d="M 20 20 L 80 20 L 50 88 C 48 91 42 91 40 88 L 35 75 C 35 75 50 40 52 35 L 20 35 Z" fill="#3B82F6"/>
-                    <!-- Mata -->
-                    <circle cx="38" cy="27" r="5" fill="#FFF"/>
-                    <circle cx="39" cy="27" r="2.5" fill="#000"/>
-                    <circle cx="62" cy="27" r="5" fill="#FFF"/>
-                    <circle cx="63" cy="27" r="2.5" fill="#000"/>
-                    <!-- Pipil lucu -->
-                    <circle cx="32" cy="31" r="3" fill="#F472B6" opacity="0.6"/>
-                    <circle cx="68" cy="31" r="3" fill="#F472B6" opacity="0.6"/>
-                    <!-- Senyum -->
-                    <path d="M 45 32 Q 50 37 55 32" stroke="#000" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-                    <!-- Topi Mahkota -->
-                    <polygon points="40,18 50,8 60,18 68,12 62,20 38,20 32,12" fill="#FBBF24"/>
-                </svg>
-            `,
-            items: [
-                { name: 'Apel', svg: `<svg class="w-12 h-12" viewBox="0 0 100 100"><circle cx="50" cy="55" r="35" fill="#EF4444"/><path d="M 50 20 C 50 5, 60 10, 65 5" stroke="#78350F" stroke-width="5" fill="none"/><path d="M 50 20 Q 30 15 35 30 Z" fill="#22C55E"/><circle cx="40" cy="45" r="3" fill="#FFF" opacity="0.5"/></svg>` },
-                { name: 'Bintang', svg: `<svg class="w-12 h-12" viewBox="0 0 100 100"><polygon points="50,10 63,38 93,38 68,58 78,88 50,70 22,88 32,58 7,38 37,38" fill="#FACC15"/><circle cx="45" cy="42" r="3" fill="#000"/><circle cx="55" cy="42" r="3" fill="#000"/><path d="M 46 50 Q 50 54 54 50" stroke="#000" stroke-width="2" fill="none"/></svg>` },
-                { name: 'Balon', svg: `<svg class="w-12 h-12" viewBox="0 0 100 100"><ellipse cx="50" cy="45" rx="30" ry="38" fill="#EC4899"/><polygon points="50,83 45,88 55,88" fill="#DB2777"/><path d="M 50 88 Q 45 95 50 100" stroke="#94A3B8" stroke-width="2" fill="none"/><ellipse cx="38" cy="30" rx="5" ry="10" fill="#FFF" opacity="0.4"/></svg>` },
-                { name: 'Kue', svg: `<svg class="w-12 h-12" viewBox="0 0 100 100"><rect x="20" y="50" width="60" height="35" rx="5" fill="#8B5CF6"/><rect x="15" y="40" width="70" height="15" rx="5" fill="#F472B6"/><rect x="47" y="15" width="6" height="25" fill="#FACC15"/><polygon points="50,5 46,15 54,15" fill="#EF4444"/></svg>` },
-                { name: 'Mobil', svg: `<svg class="w-12 h-12" viewBox="0 0 100 100"><path d="M 15 55 L 25 35 L 70 35 L 85 55 Z" fill="#10B981"/><rect x="10" y="50" width="80" height="20" rx="5" fill="#059669"/><circle cx="30" cy="70" r="10" fill="#1E293B"/><circle cx="30" cy="70" r="4" fill="#94A3B8"/><circle cx="70" cy="70" r="10" fill="#1E293B"/><circle cx="70" cy="70" r="4" fill="#94A3B8"/></svg>` },
-                { name: 'Jeruk', svg: `<svg class="w-12 h-12" viewBox="0 0 100 100"><circle cx="50" cy="55" r="35" fill="#F97316"/><path d="M 50 20 Q 60 10 65 15 Z" fill="#15803D"/><circle cx="42" cy="45" r="2.5" fill="#FFF" opacity="0.6"/></svg>` },
-                { name: 'Bunga', svg: `<svg class="w-12 h-12" viewBox="0 0 100 100"><circle cx="50" cy="30" r="15" fill="#F43F5E"/><circle cx="70" cy="50" r="15" fill="#F43F5E"/><circle cx="50" cy="70" r="15" fill="#F43F5E"/><circle cx="30" cy="50" r="15" fill="#F43F5E"/><circle cx="50" cy="50" r="14" fill="#FACC15"/></svg>` }
-            ]
-        };
-
-        // Navigation UI Indicator Updater
-        function updateStepIndicators(step) {
-            currentStep = step;
-            for (let i = 1; i <= 3; i++) {
-                const el = document.getElementById(`step${i}Indicator`);
-                if (i === step) {
-                    el.className = "flex items-center gap-1 text-amber-600 font-bold opacity-100";
-                    el.children[0].className = "w-6 h-6 rounded-full bg-amber-400 text-white flex items-center justify-center text-xs shadow";
-                } else {
-                    el.className = "flex items-center gap-1 text-slate-400 opacity-60";
-                    el.children[0].className = "w-6 h-6 rounded-full bg-slate-300 text-slate-600 flex items-center justify-center text-xs";
-                }
+        function toggleSound() {
+            isSoundOn = !isSoundOn;
+            document.getElementById('sound-icon-on').classList.toggle('hidden', !isSoundOn);
+            document.getElementById('sound-icon-off').classList.toggle('hidden', isSoundOn);
+            if (!isSoundOn && 'speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
             }
         }
 
-        // -------------------------------------------------------------
-        // TAHAP 1: Misi Mengumpulkan 7 Benda
-        // -------------------------------------------------------------
-        function renderStep1() {
-            updateStepIndicators(1);
-            collectedCount = 0;
-            const container = document.getElementById('screenArea');
+        function showScreen(screenId) {
+            ['menu', 'game1', 'game2', 'game3', 'game4'].forEach(id => {
+                document.getElementById('screen-' + id).classList.add('hidden');
+                document.getElementById('screen-' + id).classList.remove('flex');
+            });
+
+            const target = document.getElementById('screen-' + screenId);
+            target.classList.remove('hidden');
+            target.classList.add('flex');
+
+            const homeBtn = document.getElementById('home-btn');
+            if (screenId === 'menu') {
+                homeBtn.classList.add('hidden');
+                stopCatchGame();
+            } else {
+                homeBtn.classList.remove('hidden');
+            }
+
+            document.getElementById('celebration-modal').classList.add('hidden');
+        }
+
+        function startMiniGame(num) {
+            initAudio();
+            if (num === 1) {
+                showScreen('game1');
+                initGame1();
+                speakText("Ketuk bintang satu per satu sampai jumlahnya tujuh!");
+            } else if (num === 2) {
+                showScreen('game2');
+                initGame2();
+                speakText("Cari dan ketuk kelompok yang jumlahnya tepat tujuh!");
+            } else if (num === 3) {
+                showScreen('game3');
+                initGame3();
+                speakText("Ayo tebalkan angka tujuh mengikuti garis!");
+            } else if (num === 4) {
+                showScreen('game4');
+                initGame4();
+                speakText("Ketuk angka tujuh yang berjatuhan!");
+            }
+        }
+
+        function triggerWinCelebration() {
+            playSound('fanfare');
+            speakText("Selamat, kamu berhasil menyelesaikan misi petualangan angka tujuh. Baarakallahu fiik.");
             
-            container.innerHTML = `
-                <div class="text-center w-full flex flex-col items-center">
-                    <div class="flex items-center justify-center gap-3 mb-2">
-                        ${SVGAssets.sevenCharacter}
-                        <div class="bg-amber-100 border-2 border-amber-300 p-3 rounded-2xl relative shadow-sm max-w-xs text-left">
-                            <p class="text-amber-900 font-bold text-sm md:text-base">Halo! Aku Si Angka 7. BANTU AKU mengumpulkan 7 Benda Ajaib ke Keranjang ya!</p>
-                        </div>
-                    </div>
+            // Efek Konfeti
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+            }
 
-                    <!-- Progress Keranjang Slot -->
-                    <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-3 w-full max-w-md my-3 shadow-inner">
-                        <div class="flex justify-between items-center mb-2 px-1">
-                            <span class="text-xs md:text-sm font-bold text-amber-800">Keranjang Ajaib:</span>
-                            <span id="countBadge" class="bg-amber-500 text-white px-3 py-0.5 rounded-full text-xs font-extrabold shadow">0 / 7</span>
-                        </div>
-                        <div id="slotsGrid" class="grid grid-cols-7 gap-1.5 md:gap-2">
-                            ${Array(7).fill(0).map((_, i) => `
-                                <div id="slot-${i}" class="h-10 md:h-12 border-2 border-dashed border-amber-300 rounded-xl flex items-center justify-center bg-white transition-all">
-                                    <span class="text-amber-200 font-bold text-xs">${i+1}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <!-- Pilihan Benda untuk Diklik -->
-                    <p class="text-xs text-slate-500 font-medium mb-2">Klik benda-benda lucu di bawah ini:</p>
-                    <div id="itemsContainer" class="flex flex-wrap justify-center gap-2 md:gap-3 max-w-md">
-                        ${SVGAssets.items.map((item, idx) => `
-                            <button onclick="collectItem(${idx})" id="itemBtn-${idx}" class="bouncy-hover bg-white p-2 md:p-3 rounded-2xl shadow-md border-2 border-slate-100 transition-all flex flex-col items-center cursor-pointer">
-                                ${item.svg}
-                                <span class="text-[10px] font-bold text-slate-600 mt-1">${item.name}</span>
-                            </button>
-                        `).join('')}
-                    </div>
-
-                    <!-- Tombol Lanjut (Tersembunyi hingga selesai) -->
-                    <button id="nextStepBtn" onclick="renderStep2()" class="hidden mt-4 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold px-8 py-3 rounded-2xl text-lg shadow-lg bouncy-hover flex items-center gap-2">
-                        <span>Hebat! Lanjut Tracing</span>
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                    </button>
-                </div>
-            `;
+            // Reset tampilan input nama
+            document.getElementById('name-input-section').classList.remove('hidden');
+            document.getElementById('certificate-view').classList.add('hidden');
+            document.getElementById('celebration-modal').classList.remove('hidden');
         }
 
-        function collectItem(idx) {
-            if (collectedCount >= 7) return;
-
-            const btn = document.getElementById(`itemBtn-${idx}`);
-            if (btn.classList.contains('opacity-30')) return; // sudah diambil
-
-            // Effect Suara
-            collectedCount++;
-            playSound('count');
-
-            // Visual disable button
-            btn.classList.add('opacity-30', 'pointer-events-none', 'scale-90');
-
-            // Masukkan ke slot keranjang
-            const slot = document.getElementById(`slot-${collectedCount - 1}`);
-            slot.innerHTML = SVGAssets.items[idx].svg;
-            slot.classList.remove('border-dashed', 'border-amber-300');
-            slot.classList.add('border-solid', 'border-emerald-400', 'bg-emerald-50', 'scale-105');
-
-            // Update counter badge
-            document.getElementById('countBadge').innerText = `${collectedCount} / 7`;
-
-            // Cek jika sudah selesai 7
-            if (collectedCount === 7) {
-                playSound('success');
-                setTimeout(() => {
-                    confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
-                    document.getElementById('nextStepBtn').classList.remove('hidden');
-                }, 300);
+        function saveChildName() {
+            const input = document.getElementById('child-name');
+            const name = input.value.trim() || 'Anak Hebat';
+            document.getElementById('display-child-name').innerText = name;
+            
+            document.getElementById('name-input-section').classList.add('hidden');
+            document.getElementById('certificate-view').classList.remove('hidden');
+            playSound('correct');
+            speakText("Selamat " + name + "! Baarakallahu fiik.");
+            
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } });
             }
         }
 
-        // -------------------------------------------------------------
-        // TAHAP 2: Tracing Canvas Angka 7
-        // -------------------------------------------------------------
-        let isDrawing = false;
-        let traceProgress = 0;
+        /* --- MINI GAME 1 --- */
+        let g1Count = 0;
+        function initGame1() {
+            g1Count = 0;
+            document.getElementById('g1-counter').innerText = '0';
+            const container = document.getElementById('g1-star-container');
+            container.innerHTML = '';
 
-        function renderStep2() {
-            updateStepIndicators(2);
+            for (let i = 1; i <= 7; i++) {
+                const btn = document.createElement('button');
+                btn.className = "w-20 h-20 bg-amber-100 hover:bg-amber-200 border-4 border-amber-300 rounded-2xl flex items-center justify-center text-4xl shadow-md transform active:scale-90 transition pop-in";
+                btn.innerHTML = "⭐";
+                btn.dataset.id = i;
+                btn.onclick = () => handleG1Tap(btn);
+                container.appendChild(btn);
+            }
+        }
+
+        function handleG1Tap(btn) {
+            if (btn.classList.contains('disabled')) return;
+            g1Count++;
             playSound('pop');
+            speakText(g1Count.toString());
 
-            const container = document.getElementById('screenArea');
-            container.innerHTML = `
-                <div class="text-center w-full flex flex-col items-center">
-                    <h2 class="text-lg md:text-xl font-bold text-amber-900 mb-1">Ayo Tebalkan Garis Angka 7!</h2>
-                    <p class="text-xs text-slate-500 mb-3">Tarik garis dari kiri atas ke kanan, lalu miring ke bawah</p>
+            document.getElementById('g1-counter').innerText = g1Count;
+            btn.innerHTML = `<span class="font-fun text-3xl text-amber-600">${g1Count}</span>`;
+            btn.classList.remove('bg-amber-100', 'border-amber-300');
+            btn.classList.add('bg-yellow-300', 'border-yellow-500', 'scale-105', 'disabled');
 
-                    <div class="relative bg-white rounded-3xl p-2 shadow-inner border-4 border-amber-200">
-                        <canvas id="tracingCanvas" width="280" height="280" class="cursor-crosshair touch-none rounded-2xl bg-amber-50/50"></canvas>
-                    </div>
-
-                    <div class="flex gap-3 mt-4">
-                        <button onclick="resetCanvas()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-4 py-2 rounded-xl text-sm transition">
-                            🔄 Ulangi
-                        </button>
-                        <button id="finishTraceBtn" onclick="renderStep3()" class="bg-amber-500 hover:bg-amber-600 text-white font-extrabold px-6 py-2 rounded-xl text-sm shadow bouncy-hover">
-                            Selesai ✨
-                        </button>
-                    </div>
-                </div>
-            `;
-
-            initTracingCanvas();
+            if (g1Count === 7) {
+                setTimeout(() => triggerWinCelebration(), 600);
+            }
         }
 
-        function initTracingCanvas() {
-            const canvas = document.getElementById('tracingCanvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
+        /* --- MINI GAME 2 --- */
+        function initGame2() {
+            const container = document.getElementById('g2-options-container');
+            container.innerHTML = '';
 
-            drawGuideLines(ctx);
+            const counts = [7, 4, 5].sort(() => Math.random() - 0.5);
+            const emojis = ['🎈', '🍎', '🚗', '🐱', '🍪'];
+            const chosenEmoji = emojis[Math.floor(Math.random() * emojis.length)];
 
-            // Pointer event handlers (mouse & touch)
-            const getPos = (e) => {
-                const rect = canvas.getBoundingClientRect();
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                return {
-                    x: clientX - rect.left,
-                    y: clientY - rect.top
+            counts.forEach(count => {
+                const card = document.createElement('button');
+                card.className = "bg-white p-4 rounded-3xl border-4 border-pink-200 shadow-xl flex flex-wrap justify-center items-center gap-2 min-h-[160px] active:scale-95 transition hover:border-pink-400";
+                
+                for (let i = 0; i < count; i++) {
+                    const item = document.createElement('span');
+                    item.className = "text-3xl";
+                    item.innerText = chosenEmoji;
+                    card.appendChild(item);
+                }
+
+                card.onclick = () => {
+                    if (count === 7) {
+                        playSound('correct');
+                        card.classList.add('bg-emerald-100', 'border-emerald-500');
+                        setTimeout(() => triggerWinCelebration(), 500);
+                    } else {
+                        playSound('wrong');
+                        speakText("Coba lagi! Cari yang jumlahnya tujuh.");
+                        card.classList.add('bg-rose-100', 'border-rose-400');
+                        setTimeout(() => card.classList.remove('bg-rose-100', 'border-rose-400'), 800);
+                    }
                 };
-            };
 
-            const startDrawing = (e) => {
-                isDrawing = true;
-                const pos = getPos(e);
-                ctx.beginPath();
-                ctx.moveTo(pos.x, pos.y);
-                playSound('pop');
-            };
-
-            const draw = (e) => {
-                if (!isDrawing) return;
-                e.preventDefault();
-                const pos = getPos(e);
-                ctx.lineTo(pos.x, pos.y);
-                ctx.strokeStyle = '#3B82F6';
-                ctx.lineWidth = 16;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.stroke();
-            };
-
-            const stopDrawing = () => {
-                isDrawing = false;
-            };
-
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mousemove', draw);
-            window.addEventListener('mouseup', stopDrawing);
-
-            canvas.addEventListener('touchstart', startDrawing, { passive: false });
-            canvas.addEventListener('touchmove', draw, { passive: false });
-            window.addEventListener('touchend', stopDrawing);
+                container.appendChild(card);
+            });
         }
 
-        function drawGuideLines(ctx) {
-            ctx.clearRect(0, 0, 280, 280);
+        /* --- MINI GAME 3 --- */
+        let canvas, ctx;
+        let isTracing = false;
+        let tracedPoints = 0;
 
-            // Draw dotted guide for number 7
-            ctx.beginPath();
+        function initGame3() {
+            canvas = document.getElementById('trace-canvas');
+            ctx = canvas.getContext('2d');
+            resetTracing();
+
+            canvas.onmousedown = startTrace;
+            canvas.onmousemove = drawTrace;
+            canvas.onmouseup = endTrace;
+
+            canvas.ontouchstart = (e) => { startTrace(e.touches[0]); };
+            canvas.ontouchmove = (e) => { drawTrace(e.touches[0]); e.preventDefault(); };
+            canvas.ontouchend = endTrace;
+        }
+
+        function resetTracing() {
+            tracedPoints = 0;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
             ctx.strokeStyle = '#CBD5E1';
-            ctx.lineWidth = 10;
+            ctx.lineWidth = 24;
             ctx.lineCap = 'round';
-            ctx.setLineDash([8, 12]);
+            ctx.lineJoin = 'round';
+            ctx.setLineDash([12, 12]);
 
-            // Top Horizontal Line: (50,60) -> (230,60)
+            ctx.beginPath();
             ctx.moveTo(50, 60);
-            ctx.lineTo(230, 60);
+            ctx.lineTo(250, 60);
+            ctx.lineTo(110, 270);
+            ctx.stroke();
+            ctx.restore();
+        }
 
-            // Diagonal Line down: (230,60) -> (110,240)
-            ctx.lineTo(110, 240);
+        function getCanvasCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        function startTrace(e) {
+            isTracing = true;
+            const pos = getCanvasCoords(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            playSound('pop');
+        }
+
+        function drawTrace(e) {
+            if (!isTracing) return;
+            const pos = getCanvasCoords(e);
+
+            ctx.lineWidth = 18;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = `hsl(${(pos.x + pos.y) % 360}, 90%, 60%)`;
+
+            ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
 
-            ctx.setLineDash([]); // Reset dash
-
-            // Draw start dot
-            ctx.fillStyle = '#EF4444';
-            ctx.beginPath();
-            ctx.arc(50, 60, 8, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        function resetCanvas() {
-            playSound('pop');
-            const canvas = document.getElementById('tracingCanvas');
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                drawGuideLines(ctx);
+            tracedPoints++;
+            if (tracedPoints > 80) {
+                isTracing = false;
+                setTimeout(() => triggerWinCelebration(), 400);
             }
         }
 
-        // -------------------------------------------------------------
-        // TAHAP 3: Layar Selamat & Sertifikat Digital
-        // -------------------------------------------------------------
-        function renderStep3() {
-            updateStepIndicators(3);
-            playSound('success');
-
-            // Trigger Fireworks / Confetti
-            launchFireworks();
-
-            const container = document.getElementById('screenArea');
-            container.innerHTML = `
-                <div class="text-center w-full flex flex-col items-center">
-                    
-                    <!-- Sertifikat Box -->
-                    <div id="certificateCard" class="cert-border bg-amber-50/90 rounded-3xl p-4 md:p-6 w-full max-w-lg shadow-xl relative overflow-hidden my-1">
-                        <!-- Hiasan Bintang Emas Corner -->
-                        <span class="absolute top-2 left-2 text-2xl star-glow">⭐</span>
-                        <span class="absolute top-2 right-2 text-2xl star-glow">⭐</span>
-                        <span class="absolute bottom-2 left-2 text-2xl star-glow">⭐</span>
-                        <span class="absolute bottom-2 right-2 text-2xl star-glow">⭐</span>
-
-                        <h2 class="text-xl md:text-2xl font-black text-amber-700 tracking-wide uppercase mb-1">
-                            🏆 SERTIFIKAT HEBAT 🏆
-                        </h2>
-                        
-                        <!-- Pesan Teks Utama Sesuai Permintaan -->
-                        <p class="text-xs md:text-sm text-slate-700 font-bold mb-1">
-                            Selamat, kamu berhasil menyelesaikan misi petualangan angka 7.
-                        </p>
-                        <p class="text-sm md:text-base font-extrabold text-emerald-600 mb-3 italic">
-                            Baarakallahu fiik. ✨
-                        </p>
-
-                        <!-- Input Nama Anak -->
-                        <div class="my-3 bg-white p-3 rounded-2xl shadow-inner border border-amber-200">
-                            <label class="block text-xs font-bold text-amber-800 mb-1">Tulis Nama Kamu di Sini:</label>
-                            <input type="text" id="nameInput" placeholder="Ketik Nama Anak..." value="${childName}" 
-                                oninput="updateNameDisplay(this.value)"
-                                class="w-full text-center font-bold text-lg text-amber-900 bg-amber-50 border-2 border-amber-300 rounded-xl py-1.5 focus:outline-none focus:border-amber-500">
-                        </div>
-
-                        <!-- Tampilan Nama di Sertifikat -->
-                        <div class="mt-2">
-                            <span class="text-xs text-slate-400 block">Diberikan Kepada Bintang Cilik:</span>
-                            <h3 id="displayName" class="text-2xl md:text-3xl font-black text-blue-600 underline decoration-wavy decoration-amber-400 min-h-[36px]">
-                                ${childName || 'Anak Hebat'}
-                            </h3>
-                        </div>
-
-                        <!-- Karakter Mini 7 -->
-                        <div class="flex justify-center mt-2">
-                            ${SVGAssets.sevenCharacter}
-                        </div>
-                    </div>
-
-                    <!-- Tombol Aksi -->
-                    <div class="flex flex-wrap justify-center gap-3 mt-3">
-                        <button onclick="printCertificate()" class="bg-amber-500 hover:bg-amber-600 text-white font-extrabold px-5 py-2.5 rounded-2xl text-sm shadow-md bouncy-hover flex items-center gap-1.5">
-                            🖨️ Cetak / Simpan
-                        </button>
-                        <button onclick="renderStep1()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold px-5 py-2.5 rounded-2xl text-sm shadow-md bouncy-hover flex items-center gap-1.5">
-                            🔄 Main Lagi
-                        </button>
-                    </div>
-                </div>
-            `;
+        function endTrace() {
+            isTracing = false;
         }
 
-        function updateNameDisplay(val) {
-            childName = val;
-            const display = document.getElementById('displayName');
-            if (display) {
-                display.innerText = val.trim() !== "" ? val : "Anak Hebat";
+        /* --- MINI GAME 4 --- */
+        let catchInterval = null;
+        let g4Score = 0;
+
+        function initGame4() {
+            g4Score = 0;
+            document.getElementById('g4-score').innerText = '0';
+            const container = document.getElementById('catch-container');
+            container.innerHTML = '';
+            stopCatchGame();
+            catchInterval = setInterval(spawnNumber, 900);
+        }
+
+        function stopCatchGame() {
+            if (catchInterval) clearInterval(catchInterval);
+        }
+
+        function spawnNumber() {
+            const container = document.getElementById('catch-container');
+            if (!container || document.getElementById('screen-game4').classList.contains('hidden')) {
+                stopCatchGame();
+                return;
             }
-        }
 
-        function launchFireworks() {
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            const numElem = document.createElement('div');
+            const isSeven = Math.random() < 0.55;
+            const val = isSeven ? 7 : Math.floor(Math.random() * 6) + 1;
 
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
+            numElem.className = `absolute font-fun text-5xl cursor-pointer p-2 ${isSeven ? 'text-yellow-400 drop-shadow-lg' : 'text-white/70'}`;
+            numElem.innerText = val;
 
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
+            const startX = Math.random() * (container.clientWidth - 60);
+            numElem.style.left = startX + 'px';
+            numElem.style.top = '-50px';
+
+            container.appendChild(numElem);
+
+            let posY = -50;
+            const speed = 2 + Math.random() * 2;
+
+            const fallAnim = setInterval(() => {
+                posY += speed;
+                numElem.style.top = posY + 'px';
+
+                if (posY > container.clientHeight) {
+                    clearInterval(fallAnim);
+                    numElem.remove();
                 }
+            }, 20);
 
-                var particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
+            numElem.onclick = () => {
+                clearInterval(fallAnim);
+                if (val === 7) {
+                    playSound('pop');
+                    g4Score++;
+                    document.getElementById('g4-score').innerText = g4Score;
+                    numElem.innerText = "⭐";
+                    numElem.style.transform = "scale(1.5)";
+                    setTimeout(() => numElem.remove(), 200);
+
+                    if (g4Score >= 7) {
+                        stopCatchGame();
+                        setTimeout(() => triggerWinCelebration(), 400);
+                    }
+                } else {
+                    playSound('wrong');
+                    numElem.remove();
+                }
+            };
         }
-
-        function randomInRange(min, max) {
-            return Math.random() * (max - min) + min;
-        }
-
-        function printCertificate() {
-            playSound('pop');
-            window.print();
-        }
-
-        // Initialize game on load
-        window.onload = function() {
-            renderStep1();
-        };
     </script>
 </body>
 </html>
